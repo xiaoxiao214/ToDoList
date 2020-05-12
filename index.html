@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoList</title>
+    <link rel="stylesheet" href="./index.css">
+    <script src="./vue.js"></script>
+</head>
+<body>
+    <!-- 输入部分 -->
+    <div id="app">
+        <div class="header">
+            <div class="container">
+                <div class="logo">toDoList</div>
+                <div class="input-area">
+                    <input type="text"   placeholder="请输入您的待办事项"  @input="handleInput" :value = "curMask">
+                    <button @click= "addMask">添加</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待办时事件区 -->
+        <div class="container">
+            <h2>
+                <span>正在进行</span>
+                <span class="mask-num">{{ needDOList.length }}</span>
+            </h2>
+            <ul class="mask-list">
+                <li 
+                    v-for ="(mask, index) in needDOList" 
+                    :key ="mask.id"
+                >
+                    <div>
+                        <input type="checkbox" @change="doCheck(index, 'need')"/>
+                        <span>{{ mask.title }}</span>e
+                    </div>
+                    <button @click = "deleteMask(index,'need')">删除</button>
+                </li>
+            </ul>
+
+        </div>
+
+        <!-- 已完成事件区 -->
+        <div class="container"  >
+            <h2>
+                <span>已经完成</span>
+                <span class="mask-num">{{completeList.length}}</span>
+            </h2>
+            <ul class="mask-list complete-list">
+                <li v-for = "(mask ,index) in completeList" :key="mask.id">
+                    <div>
+                        <input type="checkbox" @change = "doCheck(index,'noNeed')">
+                        <span>{{mask.title}}</span>
+                    </div>
+                    <button @click = "deleteMask(index,'noNeed')">删除</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <script>
+        const vm = new Vue({
+            el:"#app",
+            data:{
+                curMask:"",
+                needDOList:[],
+                completeList:[]
+            },
+            methods:{
+                handleInput(e){
+                    this.curMask = e.target.value;
+                },
+                addMask(){
+                    if(this.curMask ==''){return};
+                    this.needDOList.push({
+                        title:this.curMask,
+                        id:Math.random()
+                    });
+                    this.curMask = '';
+                },
+                doCheck(index,tyle){
+                    if(tyle == "need"){
+                        const completeMask = this.needDOList.splice(index,1);
+                        this.completeList.push(...completeMask)  
+                    }
+                    else{
+                        const needToDoMask = this.completeList.splice(index,1);
+                        this.needDOList.push(...needToDoMask)
+                    }
+                },
+                deleteMask(index,type){
+                    const toDoList = type ==="need"?this.needDOList:this.completeList;
+                    toDoList.splice(index,1)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
